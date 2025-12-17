@@ -1,0 +1,15 @@
+apiVersion: v2
+name: redis-cache
+description: A Redis cache deployment Helm chart
+type: application
+version: 2.0.0
+appVersion: "7.0"
+keywords:
+  - redis
+  - cache
+  - database
+maintainers:
+  - name: Brian Kim
+    email: kimhiepninh02121997@gmail.com
+
+

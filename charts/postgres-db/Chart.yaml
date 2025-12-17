@@ -1,0 +1,15 @@
+apiVersion: v2
+name: postgres-db
+description: A PostgreSQL database Helm chart
+type: application
+version: 1.5.0
+appVersion: "15.3"
+keywords:
+  - postgresql
+  - database
+  - sql
+maintainers:
+  - name: Brian Kim
+    email: kimhiepninh02121997@gmail.com
+
+

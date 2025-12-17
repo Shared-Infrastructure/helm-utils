@@ -1,0 +1,57 @@
+apiVersion: v1
+entries:
+  nginx-app:
+  - apiVersion: v2
+    appVersion: 1.25.0
+    created: "2025-12-17T17:38:18.067137+07:00"
+    description: A simple Nginx web application Helm chart
+    digest: e18e6e0a9dcbd333487d3ec04b8ec7866babd8735dbcb803cea76d9cfe60cdc2
+    keywords:
+    - nginx
+    - web
+    - application
+    maintainers:
+    - email: kimhiepninh02121997@gmail.com
+      name: Brian Kim
+    name: nginx-app
+    type: application
+    urls:
+    - https://shared-infrastructure.github.io/helm-utils/nginx-app-1.0.0.tgz
+    version: 1.0.0
+  postgres-db:
+  - apiVersion: v2
+    appVersion: "15.3"
+    created: "2025-12-17T17:38:18.06768+07:00"
+    description: A PostgreSQL database Helm chart
+    digest: 8aa8bc8b15a67571bb19aa6e5c9e548d4689c44f55ad39fe84babd77c3e12445
+    keywords:
+    - postgresql
+    - database
+    - sql
+    maintainers:
+    - email: kimhiepninh02121997@gmail.com
+      name: Brian Kim
+    name: postgres-db
+    type: application
+    urls:
+    - https://shared-infrastructure.github.io/helm-utils/postgres-db-1.5.0.tgz
+    version: 1.5.0
+  redis-cache:
+  - apiVersion: v2
+    appVersion: "7.0"
+    created: "2025-12-17T17:38:18.067924+07:00"
+    description: A Redis cache deployment Helm chart
+    digest: 8e8f80783df376b54376b33264be9f658b54cf3667bad5852d2a8fc1181c2dab
+    keywords:
+    - redis
+    - cache
+    - database
+    maintainers:
+    - email: kimhiepninh02121997@gmail.com
+      name: Brian Kim
+    name: redis-cache
+    type: application
+    urls:
+    - https://shared-infrastructure.github.io/helm-utils/redis-cache-2.0.0.tgz
+    version: 2.0.0
+generated: "2025-12-17T17:38:18.066501+07:00"

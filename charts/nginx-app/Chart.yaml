@@ -1,0 +1,15 @@
+apiVersion: v2
+name: nginx-app
+description: A simple Nginx web application Helm chart
+type: application
+version: 1.0.0
+appVersion: "1.25.0"
+keywords:
+  - nginx
+  - web
+  - application
+maintainers:
+  - name: Brian Kim
+    email: kimhiepninh02121997@gmail.com
+
+
