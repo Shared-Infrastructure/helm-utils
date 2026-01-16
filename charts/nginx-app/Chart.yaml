@@ -2,7 +2,7 @@ apiVersion: v2
 name: nginx-app
 description: A simple Nginx web application Helm chart
 type: application
-version: 1.0.4
+version: 1.0.5
 appVersion: "1.25.0"
 keywords:
   - nginx
