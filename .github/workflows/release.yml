@@ -28,42 +28,14 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Import GPG key (Optional)
-        if: secrets.GPG_PRIVATE_KEY
-        run: |
-          # Import the private key
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import --batch --yes
-          
-          # Configure GPG to use passphrase from environment (if provided)
-          if [ -n "${{ secrets.GPG_PASSPHRASE }}" ]; then
-            echo "allow-preset-passphrase" >> ~/.gnupg/gpg-agent.conf
-            gpg-connect-agent reloadagent /bye
-          fi
-
-      - name: Package Helm Charts (with signing if key available)
+      - name: Package Helm Charts
         run: |
           for chart in charts/*; do
             if [ -d "$chart" ]; then
-              if [ -n "${{ secrets.GPG_PRIVATE_KEY }}" ]; then
-                echo "Signing chart: $chart"
-                # Sign with passphrase if provided, otherwise without
-                if [ -n "${{ secrets.GPG_PASSPHRASE }}" ]; then
-                  echo "${{ secrets.GPG_PASSPHRASE }}" | helm package --sign --key "${{ secrets.GPG_KEY_NAME }}" "$chart" -d docs/
-                else
-                  helm package --sign --key "${{ secrets.GPG_KEY_NAME }}" "$chart" -d docs/
-                fi
-              else
-                echo "Packaging chart without signing: $chart"
-                helm package "$chart" -d docs/
-              fi
+              echo "Packaging chart: $chart"
+              helm package "$chart" -d docs/
             fi
           done
-
-      - name: Export GPG public key (if signing enabled)
-        if: secrets.GPG_PRIVATE_KEY
-        run: |
-          gpg --armor --export "${{ secrets.GPG_KEY_NAME }}" > docs/gpg-public-key.asc
-          echo "Public key exported to docs/gpg-public-key.asc"
 
       - name: Generate Index
         run: |
@@ -75,11 +47,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            if [ -n "${{ secrets.GPG_PRIVATE_KEY }}" ]; then
-              git commit -m "Release signed Helm charts [skip ci]"
-            else
-              git commit -m "Release Helm charts [skip ci]"
-            fi
+            git commit -m "Release Helm charts [skip ci]"
             git push
           fi
 
