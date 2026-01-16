@@ -42,8 +42,8 @@ jobs:
             gpg-connect-agent reloadagent /bye
           fi
           # Export to legacy keyring format for Helm compatibility
-          gpg --export > ~/.gnupg/pubring.gpg
-          gpg --export-secret-keys > ~/.gnupg/secring.gpg
+          gpg --batch --yes --export > ~/.gnupg/pubring.gpg
+          gpg --batch --yes --pinentry-mode loopback --export-secret-keys > ~/.gnupg/secring.gpg
 
       - name: Package Helm Charts
         env:
