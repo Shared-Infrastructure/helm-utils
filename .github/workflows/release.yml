@@ -29,7 +29,7 @@ jobs:
           version: 'latest'
 
       - name: Import GPG key (Optional)
-        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+        if: secrets.GPG_PRIVATE_KEY != ''
         run: |
           # Import the private key
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import --batch --yes
@@ -60,7 +60,7 @@ jobs:
           done
 
       - name: Export GPG public key (if signing enabled)
-        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+        if: secrets.GPG_PRIVATE_KEY != ''
         run: |
           gpg --armor --export "${{ secrets.GPG_KEY_NAME }}" > docs/gpg-public-key.asc
           echo "Public key exported to docs/gpg-public-key.asc"
