@@ -32,23 +32,29 @@ jobs:
 
       - name: Import GPG key (Optional)
         if: env.HAS_GPG_KEY == 'true'
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import --batch --yes
-          if [ -n "${{ secrets.GPG_PASSPHRASE }}" ]; then
+          echo "$GPG_PRIVATE_KEY" | gpg --import --batch --yes
+          if [ -n "$GPG_PASSPHRASE" ]; then
             echo "allow-preset-passphrase" >> ~/.gnupg/gpg-agent.conf
             gpg-connect-agent reloadagent /bye
           fi
 
       - name: Package Helm Charts
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
         run: |
           for chart in charts/*; do
             if [ -d "$chart" ]; then
               if [ "$HAS_GPG_KEY" = "true" ]; then
                 echo "Signing chart: $chart"
-                if [ -n "${{ secrets.GPG_PASSPHRASE }}" ]; then
-                  echo "${{ secrets.GPG_PASSPHRASE }}" | helm package --sign --key "${{ secrets.GPG_KEY_NAME }}" "$chart" -d docs/
+                if [ -n "$GPG_PASSPHRASE" ]; then
+                  echo "$GPG_PASSPHRASE" | helm package --sign --key "$GPG_KEY_NAME" "$chart" -d docs/
                 else
-                  helm package --sign --key "${{ secrets.GPG_KEY_NAME }}" "$chart" -d docs/
+                  helm package --sign --key "$GPG_KEY_NAME" "$chart" -d docs/
                 fi
               else
                 echo "Packaging chart (unsigned): $chart"
@@ -59,8 +65,10 @@ jobs:
 
       - name: Export GPG public key (if signing enabled)
         if: env.HAS_GPG_KEY == 'true'
+        env:
+          GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
         run: |
-          gpg --armor --export "${{ secrets.GPG_KEY_NAME }}" > docs/gpg-public-key.asc
+          gpg --armor --export "$GPG_KEY_NAME" > docs/gpg-public-key.asc
           echo "Public key exported"
 
       - name: Generate Index
