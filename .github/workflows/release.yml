@@ -37,13 +37,20 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           echo "$GPG_PRIVATE_KEY" | gpg --import --batch --yes
-          if [ -n "$GPG_PASSPHRASE" ]; then
-            echo "allow-preset-passphrase" >> ~/.gnupg/gpg-agent.conf
-            gpg-connect-agent reloadagent /bye
-          fi
+          
+          # Configure GPG for non-interactive use
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          echo "max-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
+          echo "default-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
+          gpg-connect-agent reloadagent /bye || true
+          
           # Export to legacy keyring format for Helm compatibility
           gpg --batch --yes --export > ~/.gnupg/pubring.gpg
           if [ -n "$GPG_PASSPHRASE" ]; then
+            # Cache the passphrase by doing a test sign operation
+            echo "test" | gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --pinentry-mode loopback --clearsign > /dev/null 2>&1 || true
             gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --pinentry-mode loopback --export-secret-keys > ~/.gnupg/secring.gpg
           else
             gpg --batch --yes --pinentry-mode loopback --export-secret-keys > ~/.gnupg/secring.gpg
@@ -58,11 +65,9 @@ jobs:
             if [ -d "$chart" ]; then
               if [ "$HAS_GPG_KEY" = "true" ]; then
                 echo "Signing chart: $chart"
-                if [ -n "$GPG_PASSPHRASE" ]; then
-                  echo "$GPG_PASSPHRASE" | helm package --sign --key "$GPG_KEY_NAME" --keyring ~/.gnupg/secring.gpg "$chart" -d docs/
-                else
-                  helm package --sign --key "$GPG_KEY_NAME" --keyring ~/.gnupg/secring.gpg "$chart" -d docs/
-                fi
+                # Set passphrase for GPG operations
+                export GPG_TTY=$(tty) || true
+                helm package --sign --key "$GPG_KEY_NAME" --keyring ~/.gnupg/secring.gpg "$chart" -d docs/
               else
                 echo "Packaging chart (unsigned): $chart"
                 helm package "$chart" -d docs/
