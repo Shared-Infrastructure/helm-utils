@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      HAS_GPG_KEY: false  # Disabled for now - sign manually when needed
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,58 +28,14 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Import GPG key (Optional)
-        if: env.HAS_GPG_KEY == 'true'
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: |
-          echo "$GPG_PRIVATE_KEY" | gpg --import --batch --yes
-          
-          # Configure GPG for non-interactive use
-          mkdir -p ~/.gnupg
-          chmod 700 ~/.gnupg
-          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-          echo "max-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
-          echo "default-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
-          gpg-connect-agent reloadagent /bye || true
-          
-          # Export to legacy keyring format for Helm compatibility
-          gpg --batch --yes --export > ~/.gnupg/pubring.gpg
-          if [ -n "$GPG_PASSPHRASE" ]; then
-            # Cache the passphrase by doing a test sign operation
-            echo "test" | gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --pinentry-mode loopback --clearsign > /dev/null 2>&1 || true
-            gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --pinentry-mode loopback --export-secret-keys > ~/.gnupg/secring.gpg
-          else
-            gpg --batch --yes --pinentry-mode loopback --export-secret-keys > ~/.gnupg/secring.gpg
-          fi
-
       - name: Package Helm Charts
-        env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
         run: |
           for chart in charts/*; do
             if [ -d "$chart" ]; then
-              if [ "$HAS_GPG_KEY" = "true" ]; then
-                echo "Signing chart: $chart"
-                # Set passphrase for GPG operations
-                export GPG_TTY=$(tty) || true
-                helm package --sign --key "$GPG_KEY_NAME" --keyring ~/.gnupg/secring.gpg "$chart" -d docs/
-              else
-                echo "Packaging chart (unsigned): $chart"
-                helm package "$chart" -d docs/
-              fi
+              echo "Packaging chart: $chart"
+              helm package "$chart" -d docs/
             fi
           done
-
-      - name: Export GPG public key (if signing enabled)
-        if: env.HAS_GPG_KEY == 'true'
-        env:
-          GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
-        run: |
-          gpg --armor --export "$GPG_KEY_NAME" > docs/gpg-public-key.asc
-          echo "Public key exported"
 
       - name: Generate Index
         run: |
@@ -93,11 +47,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            if [ "$HAS_GPG_KEY" = "true" ]; then
-              git commit -m "Release signed Helm charts [skip ci]"
-            else
-              git commit -m "Release Helm charts [skip ci]"
-            fi
+            git commit -m "Release Helm charts [skip ci]"
             git push
           fi
 
