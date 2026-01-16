@@ -3,9 +3,9 @@ entries:
   nginx-app:
   - apiVersion: v2
     appVersion: 1.25.0
-    created: "2025-12-17T17:38:18.067137+07:00"
+    created: "2025-12-17T10:42:08.499474174Z"
     description: A simple Nginx web application Helm chart
-    digest: e18e6e0a9dcbd333487d3ec04b8ec7866babd8735dbcb803cea76d9cfe60cdc2
+    digest: d9494bfd52b84e6843b8b77e9513d6b87f41e5179232fd8fe42cd88b8e8df85d
     keywords:
     - nginx
     - web
@@ -16,14 +16,14 @@ entries:
     name: nginx-app
     type: application
     urls:
-    - https://shared-infrastructure.github.io/helm-utils/nginx-app-1.0.0.tgz
+    - https://Shared-Infrastructure.github.io/helm-utils/nginx-app-1.0.0.tgz
     version: 1.0.0
   postgres-db:
   - apiVersion: v2
     appVersion: "15.3"
-    created: "2025-12-17T17:38:18.06768+07:00"
+    created: "2025-12-17T10:42:08.49972877Z"
     description: A PostgreSQL database Helm chart
-    digest: 8aa8bc8b15a67571bb19aa6e5c9e548d4689c44f55ad39fe84babd77c3e12445
+    digest: 9a168c18bb45f81ee0c5f246fc5901e6b59acf0a40a21191c8842199c608c620
     keywords:
     - postgresql
     - database
@@ -34,14 +34,14 @@ entries:
     name: postgres-db
     type: application
     urls:
-    - https://shared-infrastructure.github.io/helm-utils/postgres-db-1.5.0.tgz
+    - https://Shared-Infrastructure.github.io/helm-utils/postgres-db-1.5.0.tgz
     version: 1.5.0
   redis-cache:
   - apiVersion: v2
     appVersion: "7.0"
-    created: "2025-12-17T17:38:18.067924+07:00"
+    created: "2025-12-17T10:42:08.499999656Z"
     description: A Redis cache deployment Helm chart
-    digest: 8e8f80783df376b54376b33264be9f658b54cf3667bad5852d2a8fc1181c2dab
+    digest: b5a595843ed6e05a95c89672cd2c6750c99069fb162cccba6d087b76e4310ab0
     keywords:
     - redis
     - cache
@@ -52,6 +52,6 @@ entries:
     name: redis-cache
     type: application
     urls:
-    - https://shared-infrastructure.github.io/helm-utils/redis-cache-2.0.0.tgz
+    - https://Shared-Infrastructure.github.io/helm-utils/redis-cache-2.0.0.tgz
     version: 2.0.0
-generated: "2025-12-17T17:38:18.066501+07:00"
+generated: "2025-12-17T10:42:08.499071061Z"
