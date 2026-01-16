@@ -37,6 +37,15 @@ fi
 echo "Using GPG key: $KEY_NAME"
 echo ""
 
+# Check if legacy keyring exists, create if needed
+if [ ! -f ~/.gnupg/pubring.gpg ] || [ ! -f ~/.gnupg/secring.gpg ]; then
+    echo "⚙️  Creating legacy GPG keyring format for Helm..."
+    gpg --export > ~/.gnupg/pubring.gpg
+    gpg --export-secret-keys > ~/.gnupg/secring.gpg
+    echo "✅ Legacy keyring created"
+    echo ""
+fi
+
 # Package and sign each chart
 for chart in $CHARTS_DIR/*; do
     if [ -d "$chart" ]; then
