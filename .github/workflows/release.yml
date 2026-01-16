@@ -59,9 +59,9 @@ jobs:
               if [ "$HAS_GPG_KEY" = "true" ]; then
                 echo "Signing chart: $chart"
                 if [ -n "$GPG_PASSPHRASE" ]; then
-                  echo "$GPG_PASSPHRASE" | helm package --sign --key "$GPG_KEY_NAME" "$chart" -d docs/
+                  echo "$GPG_PASSPHRASE" | helm package --sign --key "$GPG_KEY_NAME" --keyring ~/.gnupg/secring.gpg "$chart" -d docs/
                 else
-                  helm package --sign --key "$GPG_KEY_NAME" "$chart" -d docs/
+                  helm package --sign --key "$GPG_KEY_NAME" --keyring ~/.gnupg/secring.gpg "$chart" -d docs/
                 fi
               else
                 echo "Packaging chart (unsigned): $chart"
