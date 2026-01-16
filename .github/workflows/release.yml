@@ -43,7 +43,11 @@ jobs:
           fi
           # Export to legacy keyring format for Helm compatibility
           gpg --batch --yes --export > ~/.gnupg/pubring.gpg
-          gpg --batch --yes --pinentry-mode loopback --export-secret-keys > ~/.gnupg/secring.gpg
+          if [ -n "$GPG_PASSPHRASE" ]; then
+            gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --pinentry-mode loopback --export-secret-keys > ~/.gnupg/secring.gpg
+          else
+            gpg --batch --yes --pinentry-mode loopback --export-secret-keys > ~/.gnupg/secring.gpg
+          fi
 
       - name: Package Helm Charts
         env:
